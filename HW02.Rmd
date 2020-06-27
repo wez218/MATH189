@@ -1,0 +1,190 @@
+---
+title: "HW 02"
+author: "Hwang Min Yu, Rick Boelen, Wen Zeng"
+date: "4/25/2020"
+output: pdf_document
+---
+current.path = "/Users/Hwang Min/Desktop/UCSD/Math 189/Homework/02"
+setwd(current.path)
+
+data <- read.table("videodata.txt", header=TRUE)
+View(data)
+summary(data)
+
+# Scenario 1
+```
+fraction of students who played a
+video game in the week prior to the survey
+(point estimate)
+```
+gamers.ind <- which(data['time'] > 0)
+gamers <- data[gamers.ind,]
+View(gamers)
+summary(gamers)
+
+gamer.frac <- nrow(gamers) / nrow(data)
+gamer.frac
+```
+Random sampling + Bootstraping
+```
+set.seed(189289)
+shuffle.ind=sample(1:nrow(data))
+boot.population <- rep(data$time[shuffle.ind], length.out = 314)
+length(boot.population)
+
+B = 400 
+boot.sample <- array(dim = c(B, 91))
+for (i in 1:B) {
+  boot.sample[i, ] <- sample(boot.population, size = 91, replace = FALSE)
+}
+
+proportion <- function(x){
+  return(length(which(x==0))/length(x))
+}
+
+
+boot.prop <- apply(X = boot.sample, MARGIN = 1, FUN = proportion)
+
+```
+Interval estimate
+```
+boot.sd <- sd(boot.prop)
+gamer.frac + c(-1, 1)*1.96*boot.sd
+
+# Scenario 2
+data.clean.ind <- which(data['freq'] != 99)
+data.clean <- data[data.clean.ind,]
+
+hist(data.clean$time, breaks = 60,xlim=c(0, 35),freq = TRUE, main = "Distribution of the time spent on games", xlab = "Time")
+
+boxplot(time~freq, data = data.clean,xlab = "freq", ylab = "time", names = c('Daily', 'Weekly', 'Monthly', 'Semesterly'))
+title("Boxplot Showing Relations Between Time and Frequency")
+
+# Scenario 3
+data.mean <- mean(data$time)
+
+set.seed(189289)
+shuffle.ind=sample(1:nrow(data))
+boot.population <- rep(data$time[shuffle.ind], length.out = 314)
+length(boot.population)
+
+B = 400 
+boot.sample <- array(dim = c(B, 91))
+for (i in 1:B) {
+  boot.sample[i, ] <- sample(boot.population, size = 91, replace = FALSE)
+}
+
+boot.mean <- apply(X = boot.sample, MARGIN = 1, FUN = mean)
+
+boot.sd <- sd(boot.mean)
+data.mean + c(-1, 1)*1.96*boot.sd
+
+hist(boot.mean,breaks=50, freq=FALSE, main = "Distribution of Sample Means of Time Spend on Games Prior to the Survey")
+
+# Scenario 4
+like.ind <- which((data['like'] >= 2) & (data['like'] <= 5))
+like <- data[like.ind,]
+barplot(prop.table(table(like$like)),names=c('Very Much','Somewhat', 'Not Really','Not At All'))
+title("Bar Plot of Like Proportion")
+
+data2 <- read.table("videoMultiple.txt", header=TRUE)
+data2 <- data2[-c(53:56),]
+data2[,c(11,21)] <- sapply(data2[,c(11,21)], as.numeric)
+data2[,c(11,21)][data2[,c(11,21)] == 1] <- 0
+data2[,c(11,21)][data2[,c(11,21)] > 1] <- 1
+View(data2)
+summary(data2)
+
+type  <- data2[,c(1:5)]
+why <- data2[,c(6:12)]
+dislike <- data2[,c(13:21)]
+
+View(type)
+View(why)
+View(dislike)
+
+count <- apply(why, 1, function(x) length(which(x==1)))
+length(count[count>=3])/ length(count)
+View(count)
+apply(why,2,mean)
+
+count2 <- apply(dislike, 1, function(x) length(which(x==1)))
+length(count2[count2>=3])/ length(count2)
+View(count2)
+apply(dislike,2,mean)
+
+# Scenario 5
+barplot(table(like$sex, like$like),beside=TRUE,names=c('Very Much','Somewhat', 'Not Really','Not At All'), col=c("pink", "blue"))
+legend("topright",legend=c('Female','Male'),fill=c('pink','blue'))
+title("Bar Plot of Liking Games vs Gender")
+crossSex <- with(like,xtabs(~ like + sex))
+prop.table(crossSex,margin=2)
+
+
+work.ind <- which(data['work'] != 99)
+work <- like[work.ind,]
+work$paid = c('Not Paid', 'Paid')[((work$work > 0) & (work$work < 99))  + 1]
+work <- work[!is.na(work$paid), ]
+barplot(table(work$paid,work$like),beside=TRUE, names=c('Very Much','Somewhat', 'Not Really','Not At All'),col=c("pink", "blue"))
+legend("topright",legend=c('Not Paid','Paid'),fill=c("pink", "blue"))
+title("Bar Plot of Liking Games vs Pay")
+crossPaid <- with(work,xtabs(~ like + paid))
+prop.table(crossPaid,margin=2)
+
+
+barplot(table(like$own, like$like),beside=TRUE, names=c('Very Much','Somewhat', 'Not Really','Not At All'), col=c("pink", "blue"))
+legend("topright",legend=c('Not Own','Own'),fill=c('pink','blue'))
+title("Bar Plot of Liking Games vs Own a PC")
+crossPC <- with(like,xtabs(~ like + own))
+prop.table(crossPC,margin=2)
+
+# Additional Analysis
+```
+adding gamer column
+```
+gamer <- 'gamer'
+data[,gamer] <- NA
+gamers.ind <- which((data['like'] >= 2) & (data['like'] <= 4))
+data[gamers.ind,gamer] <- 1
+nongamers.ind <- which((data['like'] == 1) | (data['like'] >= 5) )
+nongamers.ind
+data[nongamers.ind,gamer] <- 0
+View(data)
+
+barplot(table(data$gamer, data$grade),beside=TRUE, col=c("pink", "blue"),names=c('C','B', 'A'))
+legend("topright",legend=c('Dislike Gaming','Like Gaming'),fill=c('pink','blue'))
+title("Bar Plot of Liking Games vs Grade")
+
+mean(data[((data['like'] >= 2) & (data['like'] <= 4)),]$grade)
+median(data[((data['like'] >= 2) & (data['like'] <= 4)),]$grade)
+mean(data[((data['like'] == 1) | (data['like'] >= 5)),]$grade)
+median(data[((data['like'] == 1) | (data['like'] >= 5)),]$grade)
+
+
+data.clean.ind <- which(data['freq'] != 99)
+data.clean <- data[data.clean.ind,]
+cov(data.clean$freq, data.clean$grade)
+
+```
+Bootstrap of Grades
+```
+data.grade <- mean(data$grade)
+data.grade
+
+set.seed(189289)
+shuffle.ind=sample(1:nrow(data))
+boot.grade.population <- rep(data$grade[shuffle.ind], length.out = 314)
+length(boot.grade.population)
+
+B = 400 
+boot.grade.sample <- array(dim = c(B, 91))
+for (i in 1:B) {
+  boot.grade.sample[i, ] <- sample(boot.grade.population, size = 91, replace = FALSE)
+}
+
+boot.grade.mean <- apply(X = boot.grade.sample, MARGIN = 1, FUN = mean)
+
+boot.grade.sd <- sd(boot.grade.mean)
+data.grade + c(-1, 1)*1.96*boot.grade.sd
+
+hist(boot.grade.mean,breaks=50, freq=FALSE, main = "Distribution of Sample Means of Grades")

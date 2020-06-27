@@ -1,0 +1,397 @@
+---
+title: "HW 3"
+author: "Hwang Min Yu, Rick Boelen, Wen Zeng"
+date: "5/11/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Locations
+N <- 229,354
+n <- 296
+current.path = "/Users/Hwang Min/Desktop/UCSD/Math 189/Homework/03"
+setwd(current.path)
+
+palidrome <- read.table("hcmv.txt", header=TRUE)
+plot(ecdf(palidrome$location))
+
+```
+Sample 1
+```
+set.seed(100)
+sample1 <- sample.int(N, size=n, replace=FALSE)
+
+```
+Sample 2
+```
+set.seed(101)
+sample2 <- sample.int(N, size=n, replace=FALSE)
+
+```
+Sample 3
+```
+set.seed(102)
+sample3 <- sample.int(N, size=n, replace=FALSE)
+```
+Sample 4
+```
+set.seed(103)
+sample4 <- sample.int(N, size=n, replace=FALSE)
+
+```
+Sample 5
+```
+set.seed(104)
+sample5 <- sample.int(N, size=n, replace=FALSE)
+
+```
+ecdf plots of sample
+```
+ecdf1 <- ecdf(sample1)
+ecdf2 <- ecdf(sample2)
+ecdf3 <- ecdf(sample3)
+ecdf4 <- ecdf(sample4)
+ecdf5 <- ecdf(sample5)
+
+plot(ecdf5, verticals=TRUE, do.points=FALSE)
+plot(ecdf4, verticals=TRUE, do.points=FALSE, add=TRUE, col='purple')
+plot(ecdf3, verticals=TRUE, do.points=FALSE, add=TRUE, col='blue')
+plot(ecdf2, verticals=TRUE, do.points=FALSE, add=TRUE, col='brown')
+plot(ecdf1, verticals=TRUE, do.points=FALSE, add=TRUE, col='orange')
+
+```
+plot of theoretical uniform distribution
+```
+tu <- runif(N, min=0,max=N)
+plot(ecdf(tu),verticals=TRUE, do.points=FALSE)
+
+# Spacings
+```
+Theoretical Distribution
+```
+tu_con <- rgamma(tu, shape=1)
+tu_pair <- rgamma(tu, shape=2)
+tu_trip <- rgamma(tu, shape=3)
+plot(ecdf(tu_con),main='')
+lines(ecdf(tu_pair),col='red')
+lines(ecdf(tu_trip),col='blue')
+title(main='Plot of Theoretical Distribution')
+
+```
+dataset
+```
+vect <- sort(as.vector(palidrome))
+sum_pairs <- head(vect,-1) + vect[-1]
+sum_trips <- tail(sum_pairs, -1) + head(vect,-2)
+
+```
+Sample 1
+```
+vect_s1 <- sort(as.vector(sample1))
+sum_pairs_s1 <- head(vect_s1,-1) + vect_s1[-1]
+sum_trips_S1 <- tail(sum_pairs_s1, -1) + head(vect_s1,-2)
+
+```
+Sample 2
+```
+vect_s2 <- sort(as.vector(sample2))
+sum_pairs_s2 <- head(vect_s2,-1) + vect_s2[-1]
+sum_trips_S2 <- tail(sum_pairs_s2, -1) + head(vect_s2,-2)
+
+
+```
+Sample 3
+```
+vect_s3 <- sort(as.vector(sample3))
+sum_pairs_s3 <- head(vect_s3,-1) + vect_s3[-1]
+sum_trips_S3 <- tail(sum_pairs_s3, -1) + head(vect_s3,-2)
+
+
+```
+Sample 4
+```
+vect_s4 <- sort(as.vector(sample4))
+sum_pairs_s4 <- head(vect_s4,-1) + vect_s4[-1]
+sum_trips_S4 <- tail(sum_pairs_s4, -1) + head(vect_s4,-2)
+
+```
+Sample 5
+```
+vect_s5 <- sort(as.vector(sample5))
+sum_pairs_s5 <- head(vect_s5,-1) + vect_s5[-1]
+sum_trips_S5 <- tail(sum_pairs_s5, -1) + head(vect_s5,-2)
+
+```
+plots of consecutive palidromes
+```
+plot(ecdf(diff(vect)),verticals=TRUE, do.points=FALSE, col = 'black', main='', lwd = 5)
+plot(ecdf(diff(vect_s5)), verticals=TRUE, do.points=FALSE, add=TRUE,col = 'brown')
+plot(ecdf(diff(vect_s4)), verticals=TRUE, do.points=FALSE, add=TRUE, col='purple')
+plot(ecdf(diff(vect_s3)), verticals=TRUE, do.points=FALSE, add=TRUE, col='blue')
+plot(ecdf(diff(vect_s2)), verticals=TRUE, do.points=FALSE, add=TRUE, col='brown')
+plot(ecdf(diff(vect_s1)), verticals=TRUE, do.points=FALSE, add=TRUE, col='orange')
+title(main='Plot of Consecutive Palidromes')
+
+```
+plots of consecutive palidromes pairs
+```
+plot(ecdf(diff(sum_pairs)),verticals=TRUE, do.points=FALSE, col = 'black', main='', lwd = 5)
+plot(ecdf(diff(sum_pairs_s5)), verticals=TRUE, do.points=FALSE, add=TRUE,col = 'brown')
+plot(ecdf(diff(sum_pairs_s4)), verticals=TRUE, do.points=FALSE, add=TRUE, col='purple')
+plot(ecdf(diff(sum_pairs_s3)), verticals=TRUE, do.points=FALSE, add=TRUE, col='blue')
+plot(ecdf(diff(sum_pairs_s2)), verticals=TRUE, do.points=FALSE, add=TRUE, col='brown')
+plot(ecdf(diff(sum_pairs_s1)), verticals=TRUE, do.points=FALSE, add=TRUE, col='orange')
+title(main='Plot of Consecutive Palidromes Pairs')
+```
+plots of consecutive palidromes triplets
+```
+plot(ecdf(diff(sum_trips)),verticals=TRUE, do.points=FALSE, col = 'black', main='', lwd = 5)
+plot(ecdf(diff(sum_trips_S5)), verticals=TRUE, do.points=FALSE, add=TRUE,col = 'brown')
+plot(ecdf(diff(sum_trips_S4)), verticals=TRUE, do.points=FALSE, add=TRUE, col='purple')
+plot(ecdf(diff(sum_trips_S3)), verticals=TRUE, do.points=FALSE, add=TRUE, col='blue')
+plot(ecdf(diff(sum_trips_S2)), verticals=TRUE, do.points=FALSE, add=TRUE, col='brown')
+plot(ecdf(diff(sum_trips_S1)), verticals=TRUE, do.points=FALSE, add=TRUE, col='orange')
+title(main='Plot of Consecutive Palidromes Triplets')
+
+# Counts
+```
+Splitting by Intervals
+```
+regionsplit <- function(n.region, gene, site){
+  count.int <- table(cut(site, breaks = seq(1, length(gene), length.out=n.region+1), include.lowest=TRUE))
+  count.vector <- as.vector(count.int)
+  count.tab <- table(factor(count.vector,levels=0:max(count.vector)))
+  return (count.tab)
+}
+```
+Region size 25
+```
+n.region <- 25
+gene <- seq(1,N)
+O1.tab=regionsplit(n.region, gene, sample1)
+O2.tab=regionsplit(n.region, gene, sample2)
+O3.tab=regionsplit(n.region, gene, sample3)
+O4.tab=regionsplit(n.region, gene, sample4)
+O5.tab=regionsplit(n.region, gene, sample5)
+
+trunc=9
+lvls=factor(c(0:(trunc-1),paste(">=",trunc,sep="")),levels=c(0:(trunc-1),paste(">=",trunc,sep="")))
+
+vect_split=regionsplit(n.region, gene, vect)
+vect_1=as.vector(vect_split)
+vect.trunc=c(vect_1[1:trunc],sum(vect_1[-(1:trunc)]))
+
+lambda=n/n.region
+p=c(dpois(0:(trunc-1),lambda),1-sum(dpois(0:(trunc-1),lambda)))
+E=p*n.region
+tab1=data.frame(levels=lvls,Observed=vect.trunc,Expected=E)
+library(gridExtra)
+grid.newpage()
+grid.table(tab1)
+chisq.test(vect.trunc,p=p,simulate.p.value=TRUE)
+
+grid.newpage()
+grid.table(capture.output(chisq.test(vect.trunc,p=p,simulate.p.value=TRUE))[6])
+
+```
+Region size 50
+```
+n.region_1 <- 50
+O1.tab_1=regionsplit(n.region_1, gene, sample1)
+O2.tab_1=regionsplit(n.region_1, gene, sample2)
+O3.tab_1=regionsplit(n.region_1, gene, sample3)
+O4.tab_1=regionsplit(n.region_1, gene, sample4)
+O5.tab_1=regionsplit(n.region_1, gene, sample5)
+
+vect_split_1=regionsplit(n.region_1, gene, vect)
+vect_2=as.vector(vect_split_1)
+vect.trunc_1=c(vect_2[1:trunc],sum(vect_2[-(1:trunc)]))
+
+lambda=n/n.region_1
+p=c(dpois(0:(trunc-1),lambda),1-sum(dpois(0:(trunc-1),lambda)))
+E=p*n.region_1
+tab2=data.frame(levels=lvls,Observed=vect.trunc,Expected=E)
+library(gridExtra)
+grid.newpage()
+grid.table(tab2)
+chisq.test(vect.trunc_1,p=p,simulate.p.value=TRUE)
+
+grid.newpage()
+grid.table(capture.output(chisq.test(vect.trunc_1,p=p,simulate.p.value=TRUE))[6])
+
+```
+Region size 75
+```
+n.region_2 <- 75
+O1.tab_2=regionsplit(n.region_2, gene, sample1)
+O2.tab_2=regionsplit(n.region_2, gene, sample2)
+O3.tab_2=regionsplit(n.region_2, gene, sample3)
+O4.tab_2=regionsplit(n.region_2, gene, sample4)
+O5.tab_2=regionsplit(n.region_2, gene, sample5)
+
+vect_split_2=regionsplit(n.region_2, gene, vect)
+vect_3=as.vector(vect_split_2)
+vect.trunc_2=c(vect_3[1:trunc],sum(vect_3[-(1:trunc)]))
+
+lambda=n/n.region_2
+p=c(dpois(0:(trunc-1),lambda),1-sum(dpois(0:(trunc-1),lambda)))
+E=p*n.region_2
+tab3=data.frame(levels=lvls,Observed=vect.trunc,Expected=E)
+library(gridExtra)
+grid.newpage()
+grid.table(tab3)
+chisq.test(vect.trunc_2,p=p,simulate.p.value=TRUE)
+
+grid.newpage()
+grid.table(capture.output(chisq.test(vect.trunc_2,p=p,simulate.p.value=TRUE))[6])
+
+```
+plots
+```
+plot(ecdf(O5.tab),verticals=TRUE, do.points=FALSE, col = 'black', main='', lwd = 5)
+plot(ecdf(O4.tab), verticals=TRUE, do.points=FALSE, add=TRUE, col='purple')
+plot(ecdf(O3.tab), verticals=TRUE, do.points=FALSE, add=TRUE, col='blue')
+plot(ecdf(O2.tab), verticals=TRUE, do.points=FALSE, add=TRUE, col='brown')
+plot(ecdf(O1.tab), verticals=TRUE, do.points=FALSE, add=TRUE, col='orange')
+title(main='Plot of Region Length 25')
+
+plot(ecdf(O5.tab_1),verticals=TRUE, do.points=FALSE, col = 'black', main='', lwd = 5)
+plot(ecdf(O4.tab_1), verticals=TRUE, do.points=FALSE, add=TRUE, col='purple')
+plot(ecdf(O3.tab_1), verticals=TRUE, do.points=FALSE, add=TRUE, col='blue')
+plot(ecdf(O2.tab_1), verticals=TRUE, do.points=FALSE, add=TRUE, col='brown')
+plot(ecdf(O1.tab_1), verticals=TRUE, do.points=FALSE, add=TRUE, col='orange')
+title(main='Plot of Region Length 50')
+
+plot(ecdf(O5.tab_2),verticals=TRUE, do.points=FALSE, col = 'black', main='', lwd = 5)
+plot(ecdf(O4.tab_2), verticals=TRUE, do.points=FALSE, add=TRUE, col='purple')
+plot(ecdf(O3.tab_2), verticals=TRUE, do.points=FALSE, add=TRUE, col='blue')
+plot(ecdf(O2.tab_2), verticals=TRUE, do.points=FALSE, add=TRUE, col='brown')
+plot(ecdf(O1.tab_2), verticals=TRUE, do.points=FALSE, add=TRUE, col='orange')
+title(main='Plot of Region Length 75')
+
+# Biggest Cluster
+vect <- as.vector(palidrome$location)
+gene <- seq(1,N)
+```
+Region size 25
+```
+n.region <- 25
+vect_split=regionsplit(n.region, gene,palidrome$location)
+vect_1=as.vector(vect_split)
+obs1 <- which.max(sort(vect_1))
+
+```
+Region size 50
+```
+n.region_1 <- 50
+vect_split_1=regionsplit(n.region_1, gene, palidrome$location)
+vect_2=as.vector(vect_split_1)
+obs2 <- which.max(sort(vect_2))
+
+```
+Region size 75
+```
+n.region_2 <- 75
+vect_split_2=regionsplit(n.region_2, gene, palidrome$location)
+vect_3=as.vector(vect_split_2)
+obs3 <- which.max(sort(vect_3))
+
+shuffle.ind=sample(1:nrow(palidrome))
+boot.population <- rep(palidrome$location[shuffle.ind], length.out = n)
+
+m <- 500
+boot.sample_1 <- array(dim = c(m, 1))
+boot.sample_2 <- array(dim = c(m, 1))
+boot.sample_3 <- array(dim = c(m, 1))
+```
+Boot Strap Sampling
+```
+for (i in 1:m) {
+  set.seed(i)
+  sample <- sample.int(m, size = n, replace = FALSE)
+  
+  gene1 <- seq(1,m)
+  n.region <- 25
+  vect_split=regionsplit(n.region, gene1, sample)
+  vect_1=as.vector(vect_split)
+  boot.sample_1[i, ] <- which.max(sort(vect_1))
+  
+  n.region_1 <- 50
+  vect_split_1=regionsplit(n.region_1, gene1, sample)
+  vect_2=as.vector(vect_split_1)
+  boot.sample_2[i, ] <- which.max(sort(vect_2))
+  
+  n.region_2 <- 75
+  vect_split_2=regionsplit(n.region_2, gene1, sample)
+  vect_3=as.vector(vect_split_2)
+  boot.sample_3[i, ] <- which.max(sort(vect_3))
+}
+colSums(obs1 >= boot.sample_1) / m
+colSums(obs2 >= boot.sample_2) / m
+colSums(obs3 >= boot.sample_3) / m
+
+# Additional Analysis
+```
+finding the max number of intervals of the same number of palindromes in different regions
+```
+vect <- as.vector(palidrome$location)
+gene <- seq(1,N)
+```
+Region size 25
+```
+n.region <- 25
+vect_split=regionsplit(n.region, gene,palidrome$location)
+vect_1=as.vector(vect_split)
+obs1 <- max(sort(vect_1))
+
+```
+Region size 50
+```
+n.region_1 <- 50
+vect_split_1=regionsplit(n.region_1, gene, palidrome$location)
+vect_2=as.vector(vect_split_1)
+obs2 <- max(sort(vect_2))
+
+```
+Region size 75
+```
+n.region_2 <- 75
+vect_split_2=regionsplit(n.region_2, gene, palidrome$location)
+vect_3=as.vector(vect_split_2)
+obs3 <- max(sort(vect_3))
+
+shuffle.ind=sample(1:nrow(palidrome))
+boot.population <- rep(palidrome$location[shuffle.ind], length.out = n)
+
+m <- 500
+boot.sample_1 <- array(dim = c(m, 1))
+boot.sample_2 <- array(dim = c(m, 1))
+boot.sample_3 <- array(dim = c(m, 1))
+```
+Boot Strap Sampling
+```
+for (i in 1:m) {
+  set.seed(i)
+  sample <- sample.int(m, size = n, replace = FALSE)
+  
+  gene1 <- seq(1,m)
+  n.region <- 25
+  vect_split=regionsplit(n.region, gene1, sample)
+  vect_1=as.vector(vect_split)
+  boot.sample_1[i, ] <- max(sort(vect_1))
+  
+  n.region_1 <- 50
+  vect_split_1=regionsplit(n.region_1, gene1, sample)
+  vect_2=as.vector(vect_split_1)
+  boot.sample_2[i, ] <- max(sort(vect_2))
+  
+  n.region_2 <- 75
+  vect_split_2=regionsplit(n.region_2, gene1, sample)
+  vect_3=as.vector(vect_split_2)
+  boot.sample_3[i, ] <- max(sort(vect_3))
+}
+colSums(obs1 >= boot.sample_1) / m
+colSums(obs2 >= boot.sample_2) / m
+colSums(obs3 >= boot.sample_3) / m

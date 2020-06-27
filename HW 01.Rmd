@@ -1,0 +1,157 @@
+---
+title: "HW 1"
+author: "Rick Boelen, Haley Lai, Hwang Min Yu "
+date: "4/18/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Data Setup
+current.path = "/Users/Hwang Min/Desktop/UCSD/Math 189/Homework/01"
+setwd(current.path)
+getwd()
+
+
+data <- read.table("babies.txt", header=TRUE)
+View(data)
+summary(data)
+
+
+smoker.ind <- which(data['smoke'] == 1)
+data.smoke <- data[smoker.ind,]
+View(data.smoke)
+summary(data.smoke$bwt)
+
+nonsmoker.ind <- which(data['smoke'] == 0)
+data.nonsmoke <- data[nonsmoker.ind,]
+View(data.nonsmoke)
+summary(data.nonsmoke$bwt)
+
+# Data Analysis
+```
+Basic Graphs (shape)
+```
+hist(data.smoke$bwt, breaks = 20,xlim=c(60, 180),freq = FALSE, main = "Distribution of the weight of baby for mothers who smoke", xlab = "Baby Weight in Ounces")
+abline(v=88, col="red", lwd = 2)
+
+hist(data.smoke$bwt, breaks = 20,xlim=c(60, 180),freq = FALSE, main = "Distribution of the weight of baby for mothers who smoke", xlab = "Baby Weight in Ounces")
+curve(dnorm(x,mean = mean(data.smoke$bwt),sd=sd(data.smoke$bwt)), add=TRUE,col="red",lwd=2)
+
+hist(data.nonsmoke$bwt, breaks = 20, xlim=c(60,180),freq = FALSE, main = "Distribution of the weight of baby for mothers who do not smoke", xlab = "Baby Weight in Ounces")
+abline(v=88, col="red", lwd = 2)
+
+hist(data.nonsmoke$bwt, breaks = 20, xlim=c(60,180),freq = FALSE, main = "Distribution of the weight of baby for mothers who do not smoke", xlab = "Baby Weight in Ounces")
+curve(dnorm(x,mean = mean(data.nonsmoke$bwt),sd=sd(data.nonsmoke$bwt)), add=TRUE,col="red",lwd=2)
+
+```
+Mean and Median (location)
+```
+mean(data.smoke$bwt)
+mean(data.nonsmoke$bwt)
+mean.diff <- abs(mean(data.smoke$bwt) - mean(data.nonsmoke$bwt))
+mean.diff
+
+median(data.smoke$bwt)
+median(data.nonsmoke$bwt)
+
+nrow(data.smoke)
+nrow(data.nonsmoke)
+```
+Standard Deviation (spread)
+```
+sd(data.smoke$bwt)
+sd(data.nonsmoke$bwt)
+
+```
+InterQuartile Range (spread)
+```
+IQR(data.smoke$bwt)
+IQR(data.nonsmoke$bwt)
+
+```
+Kurtosis coefficient:
+how pronounced is the peak of the distribution
+```
+kurtosis <- function(x){
+ x_std <- (x-mean(x))/sd(x)
+ return(mean(x_std^4))
+}
+kurtosis(data.smoke$bwt)
+kurtosis(data.nonsmoke$bwt)
+
+
+# Simulation studies
+
+n=length(data.smoke$bwt)
+fill_kurtosis_smoke <- rep(NA,1000)
+for(i in 1:1000){
+  fill_kurtosis_smoke[i] <- kurtosis(rnorm(n))
+}
+
+
+```
+Expectation = obseration statistic of Kurtosis statistic
+```
+
+m=length(data.nonsmoke$bwt)
+fill_kurtosis_nonsmoke <- rep(NA,1000)
+for(i in 1:1000){
+  fill_kurtosis_nonsmoke[i] <- kurtosis(rnorm(m))
+}
+hist(fill_kurtosis_smoke,main = "Sample Distribution of Kurtosis Coefficient for mothers who smoke")
+hist(fill_kurtosis_nonsmoke, main = "Sample Distribution of Kurtosis Coefficient for mothers who do not smoke")
+
+
+
+
+# Frequency
+
+table(data.smoke$bwt < 88)
+prop.table(table(data.smoke$bwt < 88))
+
+table(data.nonsmoke$bwt < 88)
+prop.table(table(data.nonsmoke$bwt < 88))
+
+```
+Reliability check
+```
+table(data.smoke$bwt < 85)
+prop.table(table(data.smoke$bwt < 85))
+table(data.nonsmoke$bwt < 85)
+prop.table(table(data.nonsmoke$bwt < 85))
+
+table(data.smoke$bwt < 93)
+prop.table(table(data.smoke$bwt < 93))
+table(data.nonsmoke$bwt < 93)
+prop.table(table(data.nonsmoke$bwt < 93))
+
+
+# Additional analysis
+
+clean.index <- which(data$age == 99)
+cleandata.index <- setdiff(rownames(data), clean.index)
+clean.table <- data[cleandata.index,]
+
+clean.smoke.ind <- which(clean.table['smoke'] == 1)
+clean.smoke <- clean.table[clean.smoke.ind,]
+clean.smoke.young.ind <- which(clean.smoke["age"] < 26)
+clean.smoke.old.ind <- which(clean.smoke["age"] >= 26)
+clean.smoke.young <- clean.smoke[clean.smoke.young.ind,]
+clean.smoke.old <- clean.smoke[clean.smoke.old.ind,]
+
+clean.nonsmoke.index <- which(clean.table['smoke'] == 0)
+clean.nonsmoke <- clean.table[clean.nonsmoke.index,]
+clean.nonsmoke.old.ind <- which(clean.nonsmoke["age"] > 26)
+clean.nonsmoke.young.ind <- which(clean.nonsmoke["age"] <= 26)
+clean.nonsmoke.young <- clean.nonsmoke[clean.nonsmoke.young.ind,]
+clean.nonsmoke.old <- clean.nonsmoke[clean.nonsmoke.old.ind,]
+
+prop.table(table(clean.nonsmoke.old$bwt < 88))
+prop.table(table(clean.nonsmoke.young$bwt < 88))
+prop.table(table(clean.smoke.old$bwt < 88))
+prop.table(table(clean.smoke.young$bwt < 88))
+```{r pressure, echo=FALSE}
+
+```

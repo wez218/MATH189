@@ -1,0 +1,142 @@
+---
+title: "HW 4"
+author: "Hwang Min Yu, Rick Boelen, Wen Zeng"
+date: "5/23/2020"
+output: pdf_document
+---
+current.path = "/Users/Hwang Min/Desktop/UCSD/Math 189/Homework/04"
+setwd(current.path)
+
+gauge <- read.table("gauge.txt", header=TRUE)
+View(gauge)
+
+# Fitting
+```
+Original
+```
+fit <- lm(formula=gain ~ density, data=gauge)
+fit
+plot(gauge) 
+abline(fit, col="red")
+
+plot(fit$residuals)
+abline(0, 0, col="red")
+
+hist(fit$residuals)
+
+```
+Log gain
+```
+gauge.log = gauge
+gauge.log$gain = log(gauge.log$gain)
+fit.log <- lm(formula=gain ~ density, data=gauge.log)
+fit.log
+plot(gauge.log) 
+abline(fit.log, col="red")
+
+plot(fit.log$residuals)
+abline(0, 0, col="red")
+
+hist(fit.log$residuals)
+
+# Predicting
+Density = gauge.log$density
+fit.log <- lm(formula=gain ~ Density, data=gauge.log)
+
+pts <- gauge.log[['density']]
+CI.conf <- predict(fit.log, data.frame(Density=pts), interval = "confidence")
+plot(gauge.log)
+lines(pts, CI.conf[,"fit"], col="black", lwd=2)
+lines(pts, CI.conf[,"lwr"], col="blue", lwd=1) 
+lines(pts, CI.conf[,"upr"], col="blue", lwd=1)
+
+```
+Gain values from confidence interval
+```
+CI.val <- unique(exp(CI.conf))
+library(gridExtra)
+library(grid)
+grid.newpage()
+grid.table(CI.val)
+```
+Density value from confidence
+```
+log.intercept <- 5.997
+slope <- -4.606
+density <- (CI.conf - log.intercept) / slope
+uniq.density <- unique(density)
+library(gridExtra)
+library(grid)
+grid.newpage()
+grid.table(uniq.density)
+
+# Additional Analysis
+```
+k-fold cross validation (k=10)
+```
+```
+Omitted block of density 0.508
+```
+train.index <- which(gauge['density'] == 0.508)
+train <- gauge[-train.index,]
+rownames(train) <- NULL
+
+Density = train$density
+Gain = train$gain
+set.seed(2020)
+k <- 10
+n <- 80
+val.size <- floor(n/k)
+folds_i <- sample(rep(1:k, length = n))
+cv.mse <- rep(0, k)
+ind.remain=1:n
+for (round in 1:k){
+  val.ind <- which(folds_i == round)
+  y <- Gain[-val.ind]
+  x <- Density[-val.ind]
+  fit <- lm(y ~ x)
+  y.hat <- predict(fit, data.frame(x = Density[val.ind]))
+  cv.mse[round] <- mean((Gain[val.ind] - y.hat)^2)
+}
+
+mean(cv.mse)
+library(gridExtra)
+library(grid)
+grid.newpage()
+grid.table(cv.mse)
+plot(1:10, cv.mse, xlab = "Degree", ylab = "MSE", lwd = 2, col = "blue", pch = 5)
+lines(1:10, cv.mse, type='l', lwd = 2, col = "blue")
+
+```
+Omitted block of density 0.001
+```
+train.index <- which(gauge['density'] == 0.001)
+train <- gauge[-train.index,]
+rownames(train) <- NULL
+
+Density = train$density
+Gain = train$gain
+set.seed(2020)
+k <- 10
+n <- 80
+val.size <- floor(n/k)
+folds_i <- sample(rep(1:k, length = n))
+cv.mse <- rep(0, k)
+ind.remain=1:n
+
+for (round in 1:k){
+  val.ind <- which(folds_i == round)
+  y <- Gain[-val.ind]
+  x <- Density[-val.ind]
+  fit <- lm(y ~ x)
+  y.hat <- predict(fit, data.frame(x = Density[val.ind]))
+  cv.mse[round] <- mean(Gain[val.ind] - y.hat)^2)
+}
+
+mean(cv.mse)
+library(gridExtra)
+library(grid)
+grid.newpage()
+grid.table(cv.mse)
+plot(1:10, cv.mse, xlab = "Degree", ylab = "MSE", lwd = 2, col = "blue", pch = 5)
+lines(1:10, cv.mse, type='l', lwd = 2, col = "blue")
